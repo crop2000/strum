@@ -200,6 +200,14 @@ pub fn enum_discriminants_inner(ast: &DeriveInput) -> syn::Result<TokenStream> {
         _ => quote! {},
     };
 
+    // Derive DiscrimantOf to associate the Discrimant with the original Enum.
+    let impl_of = quote! {
+        #[automatically_derived]
+        impl #impl_generics ::strum::DiscriminantOf< #name #ty_generics > for #discriminants_name {
+            type Enum = #name #ty_generics;
+        }
+    };
+
     Ok(quote! {
         #derives
         #repr
@@ -211,5 +219,6 @@ pub fn enum_discriminants_inner(ast: &DeriveInput) -> syn::Result<TokenStream> {
         #impl_into_discriminant
         #impl_from
         #impl_from_ref
+        #impl_of
     })
 }
